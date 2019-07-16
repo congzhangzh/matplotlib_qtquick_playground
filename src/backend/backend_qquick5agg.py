@@ -4,16 +4,59 @@ import sys
 import traceback    
 
 import matplotlib
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.backend_bases import cursors
+from matplotlib.backend_bases import cursors, TimerBase
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt5 import TimerQT
+#from matplotlib.backends.backend_qt5agg import TimerQT
 
-from matplotlib.externals import six
 
-from PyQt5 import QtCore, QtGui, QtQuick, QtWidgets
+class TimerQT(TimerBase):
+    '''
+    Subclass of :class:`backend_bases.TimerBase` that uses Qt timer events.
 
-DEBUG = False
+    Attributes
+    ----------
+    interval : int
+        The time between timer events in milliseconds. Default is 1000 ms.
+    single_shot : bool
+        Boolean flag indicating whether this timer should
+        operate as single shot (run once and then stop). Defaults to False.
+    callbacks : list
+        Stores list of (func, args) tuples that will be called upon timer
+        events. This list can be manipulated directly, or the functions
+        `add_callback` and `remove_callback` can be used.
+
+    '''
+
+    def __init__(self, *args, **kwargs):
+        TimerBase.__init__(self, *args, **kwargs)
+
+        # Create a new timer and connect the timeout() signal to the
+        # _on_timer method.
+        self._timer = QtCore.QTimer()
+        self._timer.timeout.connect(self._on_timer)
+        self._timer_set_interval()
+
+    def _timer_set_single_shot(self):
+        self._timer.setSingleShot(self._single)
+
+    def _timer_set_interval(self):
+        self._timer.setInterval(self._interval)
+
+    def _timer_start(self):
+        self._timer.start()
+
+    def _timer_stop(self):
+        self._timer.stop()
+
+#from matplotlib.externals import six
+import six
+
+#from PyQt5 import QtCore, QtGui, QtQuick, QtWidgets
+#from PySide2.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl
+from PySide2 import QtCore, QtGui, QtQuick, QtWidgets
+DEBUG = True
 
 class MatplotlibIconProvider(QtQuick.QQuickImageProvider):
     """ This class provide the matplotlib icons for the navigation toolbar.
@@ -56,14 +99,14 @@ class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
         cursors.SELECT_REGION: QtCore.Qt.CrossCursor,
     }
                
-    messageChanged = QtCore.pyqtSignal(str)
+    messageChanged = QtCore.Signal(str)
     
-    leftChanged = QtCore.pyqtSignal()
-    rightChanged = QtCore.pyqtSignal()
-    topChanged = QtCore.pyqtSignal()
-    bottomChanged = QtCore.pyqtSignal()
-    wspaceChanged = QtCore.pyqtSignal()
-    hspaceChanged = QtCore.pyqtSignal()
+    leftChanged = QtCore.Signal()
+    rightChanged = QtCore.Signal()
+    topChanged = QtCore.Signal()
+    bottomChanged = QtCore.Signal()
+    wspaceChanged = QtCore.Signal()
+    hspaceChanged = QtCore.Signal()
 
     def __init__(self, figure, parent=None, coordinates=True):
         if DEBUG:
@@ -379,13 +422,13 @@ class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
     def start_event_loop(self, timeout):
         FigureCanvasAgg.start_event_loop_default(self, timeout)
 
-    start_event_loop.__doc__ = \
-                             FigureCanvasAgg.start_event_loop_default.__doc__
+    #start_event_loop.__doc__ = \
+    #                         FigureCanvasAgg.start_event_loop_default.__doc__
 
     def stop_event_loop(self):
         FigureCanvasAgg.stop_event_loop_default(self)
 
-    stop_event_loop.__doc__ = FigureCanvasAgg.stop_event_loop_default.__doc__
+    #stop_event_loop.__doc__ = FigureCanvasAgg.stop_event_loop_default.__doc__
 
      
 class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
@@ -401,14 +444,14 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         cursors.SELECT_REGION: QtCore.Qt.CrossCursor,
     }
                
-    messageChanged = QtCore.pyqtSignal(str)
+    messageChanged = QtCore.Signal(str)
     
-    leftChanged = QtCore.pyqtSignal()
-    rightChanged = QtCore.pyqtSignal()
-    topChanged = QtCore.pyqtSignal()
-    bottomChanged = QtCore.pyqtSignal()
-    wspaceChanged = QtCore.pyqtSignal()
-    hspaceChanged = QtCore.pyqtSignal()
+    leftChanged = QtCore.Signal()
+    rightChanged = QtCore.Signal()
+    topChanged = QtCore.Signal()
+    bottomChanged = QtCore.Signal()
+    wspaceChanged = QtCore.Signal()
+    hspaceChanged = QtCore.Signal()
 
     def __init__(self, figure, parent=None, coordinates=True):
         if DEBUG:
@@ -461,7 +504,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             self._defaults[attr] = val
             setattr(self, attr, val)
     
-    @QtCore.pyqtProperty('QString', notify=messageChanged)
+    @QtCore.Property('QString', notify=messageChanged)
     def message(self):
         return self._message
     
@@ -471,12 +514,12 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             self._message = msg
             self.messageChanged.emit(msg)
     
-    @QtCore.pyqtProperty('QString', constant=True)
+    @QtCore.Property('QString', constant=True)
     def defaultDirectory(self):
         startpath = matplotlib.rcParams.get('savefig.directory', '')
         return os.path.expanduser(startpath)
     
-    @QtCore.pyqtProperty('QStringList', constant=True)
+    @QtCore.Property('QStringList', constant=True)
     def fileFilters(self):
         filetypes = self.canvas.get_supported_filetypes_grouped()
         sorted_filetypes = list(six.iteritems(filetypes))
@@ -490,7 +533,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         
         return filters
 
-    @QtCore.pyqtProperty('QString', constant=True)
+    @QtCore.Property('QString', constant=True)
     def defaultFileFilter(self):        
         default_filetype = self.canvas.get_default_filetype()
         
@@ -507,7 +550,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
                 
         return selectedFilter
     
-    @QtCore.pyqtProperty(float, notify=leftChanged)
+    @QtCore.Property(float, notify=leftChanged)
     def left(self):
         return self.figure.subplotpars.left
         
@@ -519,7 +562,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             
             self.figure.canvas.draw_idle()
     
-    @QtCore.pyqtProperty(float, notify=rightChanged)
+    @QtCore.Property(float, notify=rightChanged)
     def right(self):
         return self.figure.subplotpars.right
         
@@ -531,7 +574,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             
             self.figure.canvas.draw_idle()
     
-    @QtCore.pyqtProperty(float, notify=topChanged)
+    @QtCore.Property(float, notify=topChanged)
     def top(self):
         return self.figure.subplotpars.top
         
@@ -543,7 +586,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             
             self.figure.canvas.draw_idle()
     
-    @QtCore.pyqtProperty(float, notify=bottomChanged)
+    @QtCore.Property(float, notify=bottomChanged)
     def bottom(self):
         return self.figure.subplotpars.bottom
         
@@ -555,7 +598,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             
             self.figure.canvas.draw_idle()
     
-    @QtCore.pyqtProperty(float, notify=hspaceChanged)
+    @QtCore.Property(float, notify=hspaceChanged)
     def hspace(self):
         return self.figure.subplotpars.hspace
         
@@ -567,7 +610,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             
             self.figure.canvas.draw_idle()
     
-    @QtCore.pyqtProperty(float, notify=wspaceChanged)
+    @QtCore.Property(float, notify=wspaceChanged)
     def wspace(self):
         return self.figure.subplotpars.wspace
         
@@ -647,7 +690,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
 
         self.canvas.draw_idle()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def home(self, *args):
         """Restore the original view"""
         self._views.home()
@@ -655,7 +698,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         self.set_history_buttons()
         self._update_view()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def forward(self, *args):
         """Move forward in the view lim stack"""
         self._views.forward()
@@ -663,7 +706,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         self.set_history_buttons()
         self._update_view()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def back(self, *args):
         """move back up the view lim stack"""
         self._views.back()
@@ -777,7 +820,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             a.drag_pan(self._button_pressed, event.key, event.x, event.y)
         self.dynamic_update()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def pan(self, *args):
         """Activate the pan/zoom tool. pan with left button, zoom with right"""
         # set the pointer icon and button press funcs to the
@@ -955,7 +998,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         self.push_current()
         self.release(event)
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def zoom(self, *args):
         """Activate zoom to rect mode"""
         if self._active == 'ZOOM':
@@ -986,19 +1029,19 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
 
         self.message = self.mode
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def tight_layout(self):
         self.figure.tight_layout()
         # self._setSliderPositions()
         self.draw_idle()
 
-    @QtCore.pyqtSlot()
+    @QtCore.Slot()
     def reset_margin(self):
         self.figure.subplots_adjust(**self._defaults)
         # self._setSliderPositions()
         self.draw_idle()
         
-    @QtCore.pyqtSlot(str)
+    @QtCore.Slot(str)
     def print_figure(self, fname, *args, **kwargs):
         if fname:
             fname = QtCore.QUrl(fname).toLocalFile()

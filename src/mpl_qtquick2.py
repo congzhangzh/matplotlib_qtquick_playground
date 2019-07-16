@@ -5,6 +5,7 @@ it wants from the list and plot them on a matplotlib canvas.
 Use the sample .csv file that comes with the script for an example
 of data series.
 
+[2016-11-06] Convert to QtQuick 2.0 - Qt.labs.controls 1.0
 [2016-11-05] Convert to QtQuick 2.0 - QtQuick Controls 1.0
 [2016-11-01] Update to PyQt5.6 and python 3.5
 
@@ -14,25 +15,28 @@ Inspired from the work of Eli Bendersky (eliben@gmail.com):
 https://github.com/eliben/code-for-blog/tree/master/2009/pyqt_dataplot_demo
 
 License: MIT License
-Last modified: 2016-11-05
+Last modified: 2016-11-06
 """
 import sys, os, csv
-from PyQt5.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl, QVariant, pyqtProperty, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QGuiApplication, QColor, QImage, QPixmap
-# from PyQt5.QtWidgets import QApplication
-from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PyQt5.QtQuick import QQuickImageProvider
+from PySide2.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl
+from PySide2.QtCore import QObject, Signal, Slot, Property
+from PySide2.QtGui import QGuiApplication, QColor, QImage, QPixmap
+from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide2.QtQuick import QQuickImageProvider
+
+from PySide2.QtCore import qInstallMessageHandler
+
+pyqtSignal=Signal
+pyqtProperty=Property
+pyqtSlot=Slot
+
+os.environ['QT_API']='pyside2'
 
 import matplotlib
-matplotlib.use('Agg')
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-# from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-# from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 
-import numpy as np
+#matplotlib.rcParams["backend.qt5"]="PySide2"
 
-sys.path.append('../backend')
+#sys.path.append('../backend')
 from backend_qtquick5 import FigureCanvasQTAggToolbar, MatplotlibIconProvider
 
 class DataSerie(object):
@@ -107,7 +111,8 @@ class DataSeriesModel(QAbstractListModel):
         
     def data(self, index, role=Qt.DisplayRole):
         if(index.row() < 0 or index.row() >= len(self._data_series)):
-            return QVariant()
+            #return QVariant()
+            return None
         
         series = self._data_series[index.row()]
         
@@ -127,7 +132,7 @@ class DataSeriesModel(QAbstractListModel):
         series = self._data_series[index.row()]
         
         if role == self.SelectedRole:
-            series._selected = value
+            series._selected = not value
             self.dataChanged.emit(index, index, [role,])
             return True
                 
@@ -196,6 +201,7 @@ class Form(QObject):
                 self._data.load_from_file(filename)
                 self.statusText = "Loaded " + filename
                 self.xTo = self._data.lengthData
+                self.update_figure()
 
     @pyqtProperty(int, notify=xFromChanged)
     def xFrom(self):
@@ -281,12 +287,19 @@ class Form(QObject):
         
         
 def main():
-    app = QGuiApplication(sys.argv)
+    qInstallMessageHandler(lambda x, y, msg: print(msg))
+
+    argv = sys.argv
     
-    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")
-    
+    # Trick to set the style / not found how to do it in pythonic way
+    argv.extend(["-style", "universal"])
+    app = QGuiApplication(argv)
+
+    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")    
     imgProvider = MatplotlibIconProvider()
     
+    # !! You must specified the QApplication as parent of QQmlApplicationEngine
+    # otherwise a segmentation fault is raised when exiting the app
     engine = QQmlApplicationEngine(parent=app)
     engine.addImageProvider("mplIcons", imgProvider)
     
@@ -302,6 +315,9 @@ def main():
     mainApp.figure = win.findChild(QObject, "figure").getFigure()
     
     rc = app.exec_()
+    # There is some trouble arising when deleting all the objects here
+    # but I have not figure out how to solve the error message.
+    # It looks like 'app' is destroyed before some QObject
     sys.exit(rc)
 
 

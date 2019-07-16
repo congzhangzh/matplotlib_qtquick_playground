@@ -1,6 +1,5 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.2
-import QtQuick.Controls 1.0
 import QtQuick.Dialogs 1.2
 
 Dialog {
@@ -38,10 +37,11 @@ Dialog {
                 }
                 Slider{
                     id: top_slider
-                    minimumValue: bottom_slider.value
-                    maximumValue: 1
+                    from: bottom_slider.value
+                    to: 1
                     value: 1
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -54,10 +54,11 @@ Dialog {
                 }
                 Slider{
                     id: bottom_slider
-                    minimumValue: 0
-                    maximumValue: top_slider.value
+                    from: 0
+                    to: top_slider.value
                     value: 0
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -70,10 +71,11 @@ Dialog {
                 }
                 Slider{
                     id: left_slider
-                    minimumValue: 0
-                    maximumValue: right_slider.value
+                    from: 0
+                    to: right_slider.value
                     value: 0
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -86,10 +88,11 @@ Dialog {
                 }
                 Slider{
                     id: right_slider
-                    minimumValue: left_slider.value
-                    maximumValue: 1
+                    from: left_slider.value
+                    to: 1
                     value: 1
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -111,16 +114,17 @@ Dialog {
             GridLayout{
                 columns: 3
                 anchors.fill: parent
-                
+            
                 Label {
                     text: "hspace"
                 }
                 Slider{
                     id: hspace_slider
-                    minimumValue: 0
-                    maximumValue: 1
+                    from: 0
+                    to: 1
                     value: 0
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -133,10 +137,11 @@ Dialog {
                 }
                 Slider{
                     id: wspace_slider
-                    minimumValue: 0
-                    maximumValue: 1
+                    from: 0
+                    to: 1
                     value: 0
                     stepSize: 0.01
+                    snapMode: Slider.SnapOnRelease
                     
                     Layout.fillWidth: true
                 }
@@ -149,7 +154,7 @@ Dialog {
         RowLayout {
             id: buttons
             
-            Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+            anchors.bottom: parent.bottom
             Layout.fillWidth: true
             
             Button {
