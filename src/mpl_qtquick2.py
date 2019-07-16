@@ -18,11 +18,13 @@ License: MIT License
 Last modified: 2016-11-06
 """
 import sys, os, csv
+import pathlib
+
+import PySide2
 from PySide2.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl
 from PySide2.QtCore import QObject, Signal, Slot, Property
 from PySide2.QtGui import QGuiApplication, QColor, QImage, QPixmap
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PySide2.QtQuick import QQuickImageProvider
 
 from PySide2.QtCore import qInstallMessageHandler
 
@@ -30,14 +32,7 @@ pyqtSignal=Signal
 pyqtProperty=Property
 pyqtSlot=Slot
 
-os.environ['QT_API']='pyside2'
-
-import matplotlib
-
-#matplotlib.rcParams["backend.qt5"]="PySide2"
-
-#sys.path.append('../backend')
-from backend_qtquick5 import FigureCanvasQTAggToolbar, MatplotlibIconProvider
+from backend import FigureCanvasQTAggToolbar, MatplotlibIconProvider
 
 class DataSerie(object):
 
@@ -322,4 +317,7 @@ def main():
 
 
 if __name__ == "__main__":
+    os.environ['QT_PLUGIN_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'plugins')
+    os.environ['QML2_IMPORT_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'qml')
+    #os.environ['QT_QUICK_CONTROLS_STYLE']="Material"
     main()

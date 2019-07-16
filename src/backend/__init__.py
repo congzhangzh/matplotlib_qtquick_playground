@@ -1,0 +1,1 @@
+from .backend_qquick5agg import FigureCanvasQTAggToolbar, MatplotlibIconProvider

@@ -11,10 +11,10 @@ ApplicationWindow {
     height: 500
     title: qsTr("Hello World")
     
-    Material.theme : Material.Light
-    Material.accent : Material.LightGreen
-    Universal.theme : Universal.Light
-    Universal.accent : Universal.Amber
+//    Material.theme : Material.Light
+//    Material.accent : Material.LightGreen
+//    Universal.theme : Universal.Light
+//    Universal.accent : Universal.Amber
 
     FileDialog {
         id: fileDialog
