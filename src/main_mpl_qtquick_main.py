@@ -289,7 +289,6 @@ class Form(QObject):
         
         self.stateChanged.emit()
         
-        
 def main():
     qInstallMessageHandler(lambda x, y, msg: print(msg))
 
@@ -328,7 +327,6 @@ def main():
     # but I have not figure out how to solve the error message.
     # It looks like 'app' is destroyed before some QObject
     sys.exit(rc)
-
 
 if __name__ == "__main__":
     # os.environ['QT_PLUGIN_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'plugins')
