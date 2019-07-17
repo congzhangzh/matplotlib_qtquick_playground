@@ -466,12 +466,12 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
                
     messageChanged = QtCore.Signal(str)
     
-    leftChanged = QtCore.Signal()
-    rightChanged = QtCore.Signal()
-    topChanged = QtCore.Signal()
-    bottomChanged = QtCore.Signal()
-    wspaceChanged = QtCore.Signal()
-    hspaceChanged = QtCore.Signal()
+    left_implChanged = QtCore.Signal()
+    right_implChanged = QtCore.Signal()
+    top_implChanged = QtCore.Signal()
+    bottom_implChanged = QtCore.Signal()
+    wspace_implChanged = QtCore.Signal()
+    hspace_implChanged = QtCore.Signal()
 
     def __init__(self, figure=None, parent=None, coordinates=True):
         if DEBUG:
@@ -523,8 +523,8 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             val = getattr(self.figure.subplotpars, attr)
             self._defaults[attr] = val
             setattr(self, attr, val)
-    
-    @QtCore.Property('QString', notify=messageChanged)
+
+    @QtCore.Property(str, notify=messageChanged)
     def message(self):
         return self._message
     
@@ -553,7 +553,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         
         return filters
 
-    @QtCore.Property('QString', constant=True)
+    @QtCore.Property(str, constant=True)
     def defaultFileFilter(self):        
         default_filetype = self.canvas.get_default_filetype()
         
@@ -569,78 +569,78 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             selectedFilter = self.fileFilters[0]
                 
         return selectedFilter
-    
-    @QtCore.Property(float, notify=leftChanged)
-    def left(self):
+
+    def get_left(self):
         return self.figure.subplotpars.left
-        
-    @left.setter
-    def left(self, value):
+
+    def set_left(self, value):
         if value != self.figure.subplotpars.left:
             self.figure.subplots_adjust(left=value)
             self.leftChanged.emit()
-            
+
             self.figure.canvas.draw_idle()
-    
-    @QtCore.Property(float, notify=rightChanged)
-    def right(self):
+
+    left_impl=QtCore.Property(float, get_left, set_left, notify=left_implChanged)
+
+    def get_right(self):
         return self.figure.subplotpars.right
-        
-    @right.setter
-    def right(self, value):
+
+    def set_right(self, value):
         if value != self.figure.subplotpars.right:
             self.figure.subplots_adjust(right=value)
             self.rightChanged.emit()
             
             self.figure.canvas.draw_idle()
-    
-    @QtCore.Property(float, notify=topChanged)
-    def top(self):
+
+    right_impl = QtCore.Property(float, get_right, set_right, notify=right_implChanged)
+
+    def get_top(self):
         return self.figure.subplotpars.top
-        
-    @top.setter
-    def top(self, value):
+
+    def set_top(self, value):
         if value != self.figure.subplotpars.top:
             self.figure.subplots_adjust(top=value)
             self.topChanged.emit()
             
             self.figure.canvas.draw_idle()
-    
-    @QtCore.Property(float, notify=bottomChanged)
-    def bottom(self):
+
+    top_impl = QtCore.Property(float, get_top, set_top, notify=top_implChanged)
+
+    def get_bottom(self):
         return self.figure.subplotpars.bottom
-        
-    @bottom.setter
-    def bottom(self, value):
+
+    def set_bottom(self, value):
         if value != self.figure.subplotpars.bottom:
             self.figure.subplots_adjust(bottom=value)
             self.bottomChanged.emit()
             
             self.figure.canvas.draw_idle()
-    
-    @QtCore.Property(float, notify=hspaceChanged)
-    def hspace(self):
+
+    bottom_impl = QtCore.Property(float, get_bottom, set_bottom, notify=bottom_implChanged)
+
+    def get_hspace(self):
         return self.figure.subplotpars.hspace
-        
-    @hspace.setter
-    def hspace(self, value):
+
+    def set_hspace(self, value):
         if value != self.figure.subplotpars.hspace:
             self.figure.subplots_adjust(hspace=value)
             self.hspaceChanged.emit()
             
             self.figure.canvas.draw_idle()
-    
-    @QtCore.Property(float, notify=wspaceChanged)
-    def wspace(self):
+
+    hspace_impl = QtCore.Property(float, get_hspace, set_hspace, notify=hspace_implChanged)
+
+    def get_wspace(self):
         return self.figure.subplotpars.wspace
-        
-    @wspace.setter
-    def wspace(self, value):
+
+    def set_wspace(self, value):
         if value != self.figure.subplotpars.wspace:
             self.figure.subplots_adjust(wspace=value)
             self.wspaceChanged.emit()
             
             self.figure.canvas.draw_idle()
+
+    wspace_impl = QtCore.Property(float, get_wspace, set_wspace, notify=wspace_implChanged)
 
     def mouse_move(self, event):
         self._set_cursor(event)

@@ -154,7 +154,8 @@ Dialog {
         RowLayout {
             id: buttons
 
-            anchors.bottom: parent.bottom
+            //anchors.bottom: parent.bottom
+            Layout.alignment: Qt.AlignBottom
             Layout.fillWidth: true
 
             Button {
