@@ -10,6 +10,7 @@ from matplotlib.backend_bases import cursors, TimerBase
 from matplotlib.figure import Figure
 #from matplotlib.backends.backend_qt5agg import TimerQT
 
+import numpy as np
 
 class TimerQT(TimerBase):
     '''
@@ -67,15 +68,21 @@ class MatplotlibIconProvider(QtQuick.QQuickImageProvider):
         QtQuick.QQuickImageProvider.__init__(self, img_type)
 
     def requestImage(self, id, size):
+        #img = QtGui.QImage(os.path.join(self.basedir, id + '.png'))
+        #size = img.size()
+        #return img, size
+
         img = QtGui.QImage(os.path.join(self.basedir, id + '.png'))
-        size = img.size()
-        return img, size
+        return img
         
-    def requestPixmap(self, id, size):    
-        img, size = self.requestImage(id, size)
+    def requestPixmap(self, id, size, other):
+        # img, size = self.requestImage(id, size)
+        # pixmap = QtGui.QPixmap.fromImage(img)
+        # return pixmap, size
+
+        img = self.requestImage(id, size)
         pixmap = QtGui.QPixmap.fromImage(img)
-        
-        return pixmap, size
+        return pixmap
 
 class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
     """ This class creates a QtQuick Item encapsulating a Matplotlib
@@ -108,7 +115,7 @@ class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
     wspaceChanged = QtCore.Signal()
     hspaceChanged = QtCore.Signal()
 
-    def __init__(self, figure, parent=None, coordinates=True):
+    def __init__(self, figure=None, parent=None, coordinates=True):
         if DEBUG:
             print('FigureCanvasQtQuickAgg qtquick5: ', figure)
         # _create_qApp()
@@ -155,7 +162,20 @@ class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
             # system is LSB first and expects the bytes in reverse order
             # (bgra).
             if QtCore.QSysInfo.ByteOrder == QtCore.QSysInfo.LittleEndian:
-                stringBuffer = self.renderer._renderer.tostring_bgra()
+                #stringBuffer = self.renderer._renderer.tostring_bgra()
+                # ref from site-packages/matplotlib/backends/backend_agg.py:258
+                    # def buffer_rgba(self):
+                    #     return memoryview(self._renderer)
+                    #
+                    # def tostring_argb(self):
+                    #     return np.asarray(self._renderer).take([3, 0, 1, 2], axis=2).tobytes()
+                    #
+                    # def tostring_rgb(self):
+                    #     return np.asarray(self._renderer).take([0, 1, 2], axis=2).tobytes()
+                # argb_order=[3, 0, 1, 2]
+                # argb_order.reverse()
+                stringBuffer = np.asarray(self.renderer._renderer).take(list(reversed([3, 0, 1, 2])), axis=2).tobytes()
+
             else:
                 stringBuffer = self.renderer._renderer.tostring_argb()
 
@@ -453,7 +473,7 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
     wspaceChanged = QtCore.Signal()
     hspaceChanged = QtCore.Signal()
 
-    def __init__(self, figure, parent=None, coordinates=True):
+    def __init__(self, figure=None, parent=None, coordinates=True):
         if DEBUG:
             print('FigureQtQuickAggToolbar qtquick5: ', figure)
 

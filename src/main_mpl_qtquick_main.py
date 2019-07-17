@@ -20,6 +20,12 @@ Last modified: 2016-11-06
 import sys, os, csv
 import pathlib
 
+import faulthandler
+
+from backend.backend_qquick5agg import FigureCanvasQTAgg
+
+faulthandler.enable()
+
 import PySide2
 from PySide2.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl
 from PySide2.QtCore import QObject, Signal, Slot, Property
@@ -27,6 +33,7 @@ from PySide2.QtGui import QGuiApplication, QColor, QImage, QPixmap
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 
 from PySide2.QtCore import qInstallMessageHandler
+from PySide2.QtWidgets import QApplication
 
 pyqtSignal=Signal
 pyqtProperty=Property
@@ -247,7 +254,7 @@ class Form(QObject):
                     leg.remove()
             self.legendChanged.emit()
     
-    @pyqtProperty('QString', constant=True)
+    @pyqtProperty(str, constant=True)
     def about(self):
         msg = __doc__
         return msg.strip()
@@ -287,10 +294,13 @@ def main():
     argv = sys.argv
     
     # Trick to set the style / not found how to do it in pythonic way
-    argv.extend(["-style", "universal"])
-    app = QGuiApplication(argv)
+    #argv.extend(["-style", "universal"])
 
-    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")    
+    app = QApplication(argv)
+
+    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")
+    qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvas")
+
     imgProvider = MatplotlibIconProvider()
     
     # !! You must specified the QApplication as parent of QQmlApplicationEngine
@@ -307,6 +317,7 @@ def main():
     engine.load(QUrl('main.qml'))
     
     win = engine.rootObjects()[0]
+
     mainApp.figure = win.findChild(QObject, "figure").getFigure()
     
     rc = app.exec_()

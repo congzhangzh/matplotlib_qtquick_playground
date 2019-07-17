@@ -10,11 +10,6 @@ ApplicationWindow {
     width: 940
     height: 500
     title: qsTr("Hello World")
-    
-//    Material.theme : Material.Light
-//    Material.accent : Material.LightGreen
-//    Universal.theme : Universal.Light
-//    Universal.accent : Universal.Amber
 
     FileDialog {
         id: fileDialog
@@ -32,7 +27,7 @@ ApplicationWindow {
             anchors.fill: parent
             ToolButton {
                 width: 32
-//                text: qsTr("Load a file")
+                text: qsTr("Load a file")
                 contentItem: Image{
                     fillMode: Image.PreserveAspectFit
                     source: "document-open.svg"
@@ -43,7 +38,7 @@ ApplicationWindow {
             }
             ToolButton{
                 width: 32
-//                text: qsTr("About")
+                text: qsTr("About")
                 contentItem: Image{
                     fillMode: Image.PreserveAspectFit
                     source: "help-about.svg"
@@ -52,7 +47,7 @@ ApplicationWindow {
             }
             ToolButton {
                 width: 32
-//                text: qsTr("Quit")
+                text: qsTr("Quit")
                 contentItem: Image{
                     fillMode: Image.PreserveAspectFit
                     source: "window-close.svg"
@@ -82,7 +77,7 @@ ApplicationWindow {
                 y: (root.height-head.height-foot.height-mainView.height*scale.yScale)/2;}
             ]
     }
-    
+
     footer: Label {
         id: foot
         text: draw_mpl.statusText

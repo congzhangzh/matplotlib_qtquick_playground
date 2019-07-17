@@ -10,7 +10,7 @@ Item{
 
     ColumnLayout {
         spacing : 0
-        anchors.fill: parent        
+        anchors.fill: parent
 
         FigureToolbar {
             id: mplView
@@ -22,7 +22,7 @@ Item{
             Layout.minimumWidth: 10
             Layout.minimumHeight: 10
         }
-        
+
         MessageDialog {
             id: messageDialog
         }

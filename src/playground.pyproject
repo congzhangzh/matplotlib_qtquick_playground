@@ -1,0 +1,12 @@
+{
+    "files": ["main.py",
+    "backend/__init__.py",
+    "backend/backend_qquick5agg.py",
+    "backend/Figure.qml",
+    "backend/FigureToolbar.qml",
+    "backend/SubplotTool.qml",
+    "main.qml",
+    "MainForm.ui.qml",
+    "mpl_qtquick2.py"
+    ]
+}
