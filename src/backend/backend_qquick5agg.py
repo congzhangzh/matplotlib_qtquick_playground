@@ -106,7 +106,7 @@ class FigureCanvasQtQuickAgg(QtQuick.QQuickPaintedItem, FigureCanvasAgg):
         cursors.SELECT_REGION: QtCore.Qt.CrossCursor,
     }
                
-    messageChanged = QtCore.Signal(str)
+    #messageChanged = QtCore.Signal(str)
     
     leftChanged = QtCore.Signal()
     rightChanged = QtCore.Signal()
@@ -524,16 +524,27 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             self._defaults[attr] = val
             setattr(self, attr, val)
 
-    @QtCore.Property(str, notify=messageChanged)
-    def message(self):
+    # @QtCore.Property(str, notify=messageChanged)
+    # def message(self):
+    #     return self._message
+    #
+    # @message.setter
+    # def message(self, msg):
+    #     if msg != self._message:
+    #         self._message = msg
+    #         self.messageChanged.emit(msg)
+
+
+    def get_message(self):
         return self._message
-    
-    @message.setter
-    def message(self, msg):
+
+    def set_message(self, msg):
         if msg != self._message:
             self._message = msg
             self.messageChanged.emit(msg)
-    
+
+    message=QtCore.Property(str, get_message, set_message, notify=messageChanged)
+
     @QtCore.Property('QString', constant=True)
     def defaultDirectory(self):
         startpath = matplotlib.rcParams.get('savefig.directory', '')
