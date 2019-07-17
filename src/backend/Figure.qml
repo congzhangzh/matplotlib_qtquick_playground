@@ -5,7 +5,7 @@ Item {
     width: 480
     height: 320 
 
-    FigureCanvas {
+    FigureCanvasByPython {
         id: mplView
         objectName : "figure"
         anchors.fill: parent        

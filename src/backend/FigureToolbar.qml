@@ -12,7 +12,7 @@ Item{
         spacing : 0
         anchors.fill: parent
 
-        FigureToolbar {
+        FigureToolbarByPython {
             id: mplView
             objectName : "figure"
                         

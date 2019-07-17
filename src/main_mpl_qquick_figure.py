@@ -43,7 +43,7 @@ def main():
     argv.extend(["-style", "universal"])
     app = QGuiApplication(argv)
     
-    qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvas")
+    qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvasByPython")
     
     view = QQuickView()
     view.setResizeMode(QQuickView.SizeRootObjectToView)

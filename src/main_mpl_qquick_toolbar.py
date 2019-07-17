@@ -39,7 +39,7 @@ def main():
     
     app = QGuiApplication(argv)
     
-    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")
+    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbarByPython")
     
     imgProvider = MatplotlibIconProvider()
     view = QQuickView()
