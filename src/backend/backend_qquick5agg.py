@@ -550,8 +550,8 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         startpath = matplotlib.rcParams.get('savefig.directory', '')
         return os.path.expanduser(startpath)
     
-    @QtCore.Property('QStringList', constant=True)
-    def fileFilters(self):
+
+    def get_fileFilters(self):
         filetypes = self.canvas.get_supported_filetypes_grouped()
         sorted_filetypes = list(six.iteritems(filetypes))
         sorted_filetypes.sort()
@@ -564,8 +564,9 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
         
         return filters
 
-    @QtCore.Property(str, constant=True)
-    def defaultFileFilter(self):        
+    fileFilters=QtCore.Property('QStringList', get_fileFilters)
+
+    def get_defaultFileFilter(self):
         default_filetype = self.canvas.get_default_filetype()
         
         selectedFilter = None
@@ -580,6 +581,8 @@ class FigureQtQuickAggToolbar(FigureCanvasQtQuickAgg):
             selectedFilter = self.fileFilters[0]
                 
         return selectedFilter
+
+    defaultFileFilter=QtCore.Property(str, get_defaultFileFilter)
 
     def get_left(self):
         return self.figure.subplotpars.left

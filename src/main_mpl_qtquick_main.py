@@ -298,8 +298,8 @@ def main():
 
     app = QApplication(argv)
 
-    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbar")
-    qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvas")
+    qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvasByPython")
+    qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbarByPython")
 
     imgProvider = MatplotlibIconProvider()
     
@@ -318,7 +318,8 @@ def main():
     
     win = engine.rootObjects()[0]
 
-    mainApp.figure = win.findChild(QObject, "figure").getFigure()
+    firgure=win.findChild(QObject, "figure")
+    mainApp.figure = firgure.getFigure()
     
     rc = app.exec_()
     # There is some trouble arising when deleting all the objects here
@@ -328,7 +329,7 @@ def main():
 
 
 if __name__ == "__main__":
-    os.environ['QT_PLUGIN_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'plugins')
-    os.environ['QML2_IMPORT_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'qml')
+    # os.environ['QT_PLUGIN_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'plugins')
+    # os.environ['QML2_IMPORT_PATH']=str(pathlib.Path(PySide2.__file__).parent/'Qt'/'qml')
     #os.environ['QT_QUICK_CONTROLS_STYLE']="Material"
     main()
