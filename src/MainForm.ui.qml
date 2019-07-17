@@ -59,42 +59,42 @@ Item {
             SubplotTool {
                 id: setMargin
 
-                left.value: mplView.left
-                right.value: mplView.right
-                top.value: mplView.top
-                bottom.value: mplView.bottom
+                left.value: mplView.left_impl
+                right.value: mplView.right_impl
+                top.value: mplView.top_impl
+                bottom.value: mplView.bottom_impl
 
-                hspace.value: mplView.hspace
-                wspace.value: mplView.wspace
+                hspace.value: mplView.hspace_impl
+                wspace.value: mplView.wspace_impl
 
                 function initMargin() {
                     // Init slider value
-                    setMargin.left.value = mplView.left
-                    setMargin.right.value = mplView.right
-                    setMargin.top.value = mplView.top
-                    setMargin.bottom.value = mplView.bottom
+                    setMargin.left.value = mplView.left_impl
+                    setMargin.right.value = mplView.right_impl
+                    setMargin.top.value = mplView.top_impl
+                    setMargin.bottom.value = mplView.bottom_impl
 
-                    setMargin.hspace.value = mplView.hspace
-                    setMargin.wspace.value = mplView.wspace
+                    setMargin.hspace.value = mplView.hspace_impl
+                    setMargin.wspace.value = mplView.wspace_impl
 
                     // Invert parameter bindings
-                    mplView.left = Qt.binding(function () {
+                    mplView.left_impl = Qt.binding(function () {
                         return setMargin.left.value
                     })
-                    mplView.right = Qt.binding(function () {
+                    mplView.right_impl = Qt.binding(function () {
                         return setMargin.right.value
                     })
-                    mplView.top = Qt.binding(function () {
+                    mplView.top_impl = Qt.binding(function () {
                         return setMargin.top.value
                     })
-                    mplView.bottom = Qt.binding(function () {
+                    mplView.bottom_impl = Qt.binding(function () {
                         return setMargin.bottom.value
                     })
 
-                    mplView.hspace = Qt.binding(function () {
+                    mplView.hspace_impl = Qt.binding(function () {
                         return setMargin.hspace.value
                     })
-                    mplView.wspace = Qt.binding(function () {
+                    mplView.wspace_impl = Qt.binding(function () {
                         return setMargin.wspace.value
                     })
                 }
@@ -228,6 +228,7 @@ Item {
                         }
                     }
 
+/*
                     ToolButton {
                         id: figureOptions
 
@@ -242,7 +243,7 @@ Item {
 
                         }
                     }
-
+*/
                     Item {
                         Layout.fillWidth: true
                     }
@@ -255,6 +256,15 @@ Item {
                         text: mplView.message
                     }
                 }
+            }
+        }
+
+        Connections {
+            target: dataModel
+            onDataChanged: {
+                console.warn("--begin-- update_figure from js")
+                draw_mpl.update_figure()
+                console.warn("--begin-- update_figure from js")
             }
         }
 

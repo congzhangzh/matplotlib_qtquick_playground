@@ -71,7 +71,7 @@ class DataSeriesModel(QAbstractListModel):
         DataRole : b"data"
     }
     
-    lengthDataChanged = pyqtSignal()
+    lengthDataChanged = QtCore.Signal()
     
     def __init__(self, parent=None):
         QAbstractListModel.__init__(self, parent)
@@ -81,7 +81,7 @@ class DataSeriesModel(QAbstractListModel):
 
     def get_lengthData(self):
         return self._length_data
-    
+
     def set_lengthData(self, length):
         if self._length_data != length:
             self._length_data = length
@@ -135,7 +135,7 @@ class DataSeriesModel(QAbstractListModel):
         series = self._data_series[index.row()]
         
         if role == self.SelectedRole:
-            series._selected = not value
+            series._selected = value
             self.dataChanged.emit(index, index, [role,])
             return True
                 
@@ -320,8 +320,8 @@ def main():
     
     win = engine.rootObjects()[0]
 
-    firgure=win.findChild(QObject, "figure")
-    mainApp.figure = firgure.getFigure()
+    figure=win.findChild(QObject, "figure")
+    mainApp.figure = figure.getFigure()
     
     rc = app.exec_()
     # There is some trouble arising when deleting all the objects here
