@@ -302,6 +302,11 @@ def main():
     qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvasByPython")
     qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbarByPython")
 
+    # this should work in the future
+    # qmlRegisterType(
+    #     QUrl.fromLocalFile( str(pathlib.Path(backend_qquick5agg.__file__)/'SubplotTool.qml')),
+    #     "Backend", 1, 0, "SubplotTool")
+
     imgProvider = MatplotlibIconProvider()
     
     # !! You must specified the QApplication as parent of QQmlApplicationEngine
@@ -315,7 +320,7 @@ def main():
     mainApp = Form(data=data_model)
     context.setContextProperty("draw_mpl", mainApp)
     
-    engine.load(QUrl('main.qml'))
+    engine.load(QUrl(str(pathlib.Path(__file__).parent/'main_mpl_qtquick_main.qml')))
     
     win = engine.rootObjects()[0]
 

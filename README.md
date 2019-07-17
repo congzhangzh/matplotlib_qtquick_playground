@@ -25,7 +25,7 @@ emit signal forcing the figure to update.
 
 ## QtQuick Controls 2.0 version
 
-![QtQuick Controls 2.0 version](src/QtQuickControls2.PNG)
+![QtQuick Controls 2.0 version](src/examples/full_sample/QtQuickControls2.PNG)
 
 Code functions
 ==============

@@ -18,11 +18,13 @@ License: MIT License
 Last modified: 2016-11-06
 """
 import sys, os, csv
+import pathlib
 from PySide2.QtCore import Qt, QObject, QUrl
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import qmlRegisterType
 from PySide2.QtQuick import QQuickView
 
+from backend import backend_qquick5agg
 from backend.backend_qquick5agg import FigureCanvasQTAggToolbar, MatplotlibIconProvider
 
 import matplotlib
@@ -40,12 +42,19 @@ def main():
     app = QGuiApplication(argv)
     
     qmlRegisterType(FigureCanvasQTAggToolbar, "Backend", 1, 0, "FigureToolbarByPython")
-    
+
+    # this should work in the future
+    # qmlRegisterType(
+    #     QUrl.fromLocalFile( str(pathlib.Path(backend_qquick5agg.__file__)/'SubplotTool.qml')),
+    #     "Backend", 1, 0, "SubplotTool")
+
     imgProvider = MatplotlibIconProvider()
     view = QQuickView()
+
+
     view.engine().addImageProvider("mplIcons", imgProvider)
     view.setResizeMode(QQuickView.SizeRootObjectToView)
-    view.setSource(QUrl('backend/FigureToolbar.qml'))
+    view.setSource(QUrl(str(pathlib.Path(__file__).parent/'FigureToolbar.qml')))
     
     win = view.rootObject()
     fig = win.findChild(QObject, "figure").getFigure()

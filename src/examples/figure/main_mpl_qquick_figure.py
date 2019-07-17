@@ -18,6 +18,7 @@ License: MIT License
 Last modified: 2016-11-06
 """
 import sys, os, csv
+import pathlib
 from PySide2.QtCore import Qt, QObject, QUrl, qInstallMessageHandler
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import qmlRegisterType
@@ -40,14 +41,14 @@ def main():
     argv = sys.argv
     
     # Trick to set the style / not found how to do it in pythonic way
-    argv.extend(["-style", "universal"])
+    #argv.extend(["-style", "universal"])
     app = QGuiApplication(argv)
     
     qmlRegisterType(FigureCanvasQTAgg, "Backend", 1, 0, "FigureCanvasByPython")
     
     view = QQuickView()
     view.setResizeMode(QQuickView.SizeRootObjectToView)
-    view.setSource(QUrl('backend/Figure.qml'))
+    view.setSource(QUrl( str(pathlib.Path(__file__).parent/'Figure.qml')) )
     view.show()
     
     win = view.rootObject()

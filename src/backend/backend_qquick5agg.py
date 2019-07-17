@@ -51,12 +51,10 @@ class TimerQT(TimerBase):
     def _timer_stop(self):
         self._timer.stop()
 
-#from matplotlib.externals import six
 import six
 
-#from PyQt5 import QtCore, QtGui, QtQuick, QtWidgets
-#from PySide2.QtCore import QAbstractListModel, QModelIndex, QObject, QSize, Qt, QUrl
 from PySide2 import QtCore, QtGui, QtQuick, QtWidgets
+
 DEBUG = True
 
 class MatplotlibIconProvider(QtQuick.QQuickImageProvider):

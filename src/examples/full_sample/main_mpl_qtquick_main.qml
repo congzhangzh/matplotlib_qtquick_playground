@@ -60,7 +60,7 @@ ApplicationWindow {
         }
     }    
 
-    MainForm {
+    Mpl_Qtquick_MainForm {
         id: mainView
         width: parent.width
         height: 320
